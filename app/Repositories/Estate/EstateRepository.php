@@ -45,8 +45,11 @@ class EstateRepository extends BaseRepository implements EstateRepositoryInterfa
                 AllowedFilter::callback("has_comment", function (Builder $query, $bool){
                     $query->whereHas("comments");
                 }),
+                AllowedFilter::callback("commentsBigger", function (Builder $query, $min){
+                    $query->withCount("comments")->where("comments_count", ">", $min);
+                }),
                 AllowedFilter::callback("tag", function (Builder $query, $tag){
-                    $query->whereHas("tags`", function (Builder $query) use ($tag){
+                    $query->whereHas("tags", function (Builder $query) use ($tag){
                         $query->where("name", json_encode(["en"=> $tag]));
                     });
                 }),
